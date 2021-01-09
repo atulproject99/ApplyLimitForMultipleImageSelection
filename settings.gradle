@@ -1,0 +1,3 @@
+include ':atul'
+include ':app'
+rootProject.name = "HellApp"
