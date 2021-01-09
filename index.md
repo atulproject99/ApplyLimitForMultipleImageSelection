@@ -1,37 +1,107 @@
-## Welcome to GitHub Pages
+## Please Read Carefully before use this library
+1.Add it in your root build.gradle at the end of repositories:
+allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+2.Add the dependency
 
-You can use the [editor on GitHub](https://github.com/atulproject99/ApplyLimitForMultipleImageSelection/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+dependencies {
+	        implementation 'com.github.atulproject99:ApplyLimitForMultipleImageSelection:1.0'
+	}
+ 
+## Add Permission in your manifest.xml
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
+ ## Add tools:replace="android:theme" in Application tag in manifest.xml
+ 
+   <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CheckApplication2"
+        tools:replace="android:theme"
+        >
+        </application>
+    
+ ## Add this line in your manifest.xml
+ 
+ <activity
+            android:name="atul.maurya773.testapplication.activities.AlbumSelectActivity"
+            android:theme="@style/MultipleImageSelectTheme">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Check permission in your activity on click and then send intent 
 
-```markdown
-Syntax highlighted code block
+## Write this code in button click funtion
 
-# Header 1
-## Header 2
-### Header 3
+button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED)
+            {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1001);
+                return;
 
-- Bulleted
-- List
+            }
+        }
+        
+//set limit on number of images that can be selected, default is 10
+        Intent intent = new Intent(this, AlbumSelectActivity.class);
+        intent.putExtra(Constants.INTENT_EXTRA_LIMIT, 2);
+        startActivityForResult(intent, Constants.REQUEST_CODE);
+                
+            }
+        });
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
 
-[Link](url) and ![Image](src)
-```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Override onActivityResult and write this code
 
-### Jekyll Themes
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+  if (requestCode == Constants.REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+    //The array list has the image paths of the selected images
+    ArrayList<Image> images = data.getParcelableArrayListExtra(Constants.INTENT_EXTRA_IMAGES);
+    ...  
+}
+  
+  
+  
+ ## For custom theme do somechanging in code
+ 
+ <color name="multiple_image_select_primary">#2E7D32</color>
+    <color name="multiple_image_select_primaryDark">#1B5E20</color>
+    <color name="multiple_image_select_primaryLight">#C8E6C9</color>
+    <color name="multiple_image_select_accent">#4CAF50</color>
+    <color name="multiple_image_select_primaryText">#212121</color>
+    <color name="multiple_image_select_secondaryText">#727272</color>
+    <color name="multiple_image_select_divider">#B6B6B6</color>
+    <color name="multiple_image_select_toolbarPrimaryText">#FFFFFF</color>
+    <color name="multiple_image_select_albumTextBackground">#99FFFFFF</color>
+    <color name="multiple_image_select_imageSelectBackground">#000000</color>
+    <color name="multiple_image_select_buttonText">#FFFFFF</color>
+</resources>
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/atulproject99/ApplyLimitForMultipleImageSelection/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
+## And make some changes in in AlbumSelectActivity and ImageSelectActivity
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+
+# Paste this code
+  tools:replace="android:theme"
+    android:theme="@style/OverrideMultipleImageSelectTheme"
+
+
